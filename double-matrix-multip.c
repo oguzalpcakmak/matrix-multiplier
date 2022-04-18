@@ -10,11 +10,15 @@
 #include <stdlib.h>
 #include <time.h>
 
-typedef struct double_matrice //I had to use this method to return matrices.
+typedef struct double_mcols
 {
     double mval;
-    struct double_matrice *mcol;
-} dmatrice;
+} mcols;
+
+typedef struct double_matrix //I had to use this method to return matrices.
+{
+    mcols *mcol;
+} dmatrix;
 
 double randfrom(double min, double max) //Simple random double value generation method.
 {
@@ -23,21 +27,21 @@ double randfrom(double min, double max) //Simple random double value generation 
     return min + (rand() / div);
 }
 
-dmatrice *make_matrice(int lines, int columns) //Creates 2D matrice array.
+dmatrix *make_matrix(int rows, int columns) //Creates 2D matrix array.
 {
-    dmatrice *new_matrice = (dmatrice *)(malloc(sizeof(dmatrice)*lines));
-    for(int i = 0; i < lines; i++)
+    dmatrix *new_matrix = (dmatrix *)(malloc(sizeof(dmatrix)*rows));
+    for(int i = 0; i < rows; i++)
     {
-        new_matrice[i].mcol = (dmatrice *)(malloc(sizeof(dmatrice)*columns));
+        new_matrix[i].mcol = (mcols *)(malloc(sizeof(mcols)*columns));
     }
-    return new_matrice;
+    return new_matrix;
 }
 
-dmatrice *matrice_multiplier(dmatrice *first, int f_lines, int f_columns, dmatrice *second, int s_lines, int s_columns)
+dmatrix *matrix_multiplier(dmatrix *first, int f_rows, int f_columns, dmatrix *second, int s_rows, int s_columns)
 {
-    dmatrice *end_product = make_matrice(f_lines, s_columns);
+    dmatrix *end_product = make_matrix(f_rows, s_columns);
 
-    for(int i = 0; i < f_lines; i++)
+    for(int i = 0; i < f_rows; i++)
     {
         for(int j = 0; j < s_columns; j++)
         {
@@ -53,11 +57,11 @@ dmatrice *matrice_multiplier(dmatrice *first, int f_lines, int f_columns, dmatri
 
 }
 
-void print_matrices(dmatrice *first, int f_lines, int f_columns, dmatrice *second, int s_lines, int s_columns, dmatrice *product)
+void print_matrices(dmatrix *first, int f_rows, int f_columns, dmatrix *second, int s_rows, int s_columns, dmatrix *product)
 {
     printf("\n"); //Not the prettiest way to print I know.
 
-    for(int i = 0; i < s_lines; i++)
+    for(int i = 0; i < s_rows; i++)
     {
         for(int j = 0; j < f_columns; j++) printf("\t");
 
@@ -68,7 +72,7 @@ void print_matrices(dmatrice *first, int f_lines, int f_columns, dmatrice *secon
         printf("\n\n");
     }
 
-    for(int i = 0; i < f_lines; i++)
+    for(int i = 0; i < f_rows; i++)
     {
         for(int j = 0; j < f_columns; j++)
         {
@@ -83,14 +87,14 @@ void print_matrices(dmatrice *first, int f_lines, int f_columns, dmatrice *secon
     }
 }
 
-void fill_matrice(dmatrice *matrice, int lines, int columns, double min, double max)
+void fill_matrix(dmatrix *matrix, int rows, int columns, double min, double max)
 {
     
-    for(int i = 0; i < lines; i++) //Fills matrice with random values.
+    for(int i = 0; i < rows; i++) //Fills matrix with random values.
     {
         for(int j = 0; j < columns; j++)
         {
-            matrice[i].mcol[j].mval = randfrom(min, max);
+            matrix[i].mcol[j].mval = randfrom(min, max);
         }
     }
     
@@ -102,29 +106,29 @@ int main(void)
     time_t *tp = NULL;
     srand(time(tp));
 
-    int fm_lin, fm_col, sm_lin, sm_col;
+    int fm_row, fm_col, sm_row, sm_col;
 
     do
     {
-        printf("Enter line length of first matrice -> ");
-        scanf("%d", &fm_lin);
-        printf("Enter column length of first matrice -> ");
+        printf("Enter line length of first matrix -> ");
+        scanf("%d", &fm_row);
+        printf("Enter column length of first matrix -> ");
         scanf("%d", &fm_col);
-        printf("Enter line length of second matrice -> ");
-        scanf("%d", &sm_lin);
-        printf("Enter column length of second matrice -> ");
+        printf("Enter line length of second matrix -> ");
+        scanf("%d", &sm_row);
+        printf("Enter column length of second matrix -> ");
         scanf("%d", &sm_col);
-    } while (fm_col != sm_lin); //Hope whoever uses it figures this out.
+    } while (fm_col != sm_row); //Hope whoever uses it figures this out.
 
-    dmatrice *first_matrice = make_matrice(fm_lin, fm_col);
-    fill_matrice(first_matrice, fm_lin, fm_col, -1, 1);
+    dmatrix *first_matrix = make_matrix(fm_row, fm_col);
+    fill_matrix(first_matrix, fm_row, fm_col, -1, 1);
 
-    dmatrice *second_matrice = make_matrice(sm_lin, sm_col);
-    fill_matrice(second_matrice, sm_lin, sm_col, -1, 1);
+    dmatrix *second_matrix = make_matrix(sm_row, sm_col);
+    fill_matrix(second_matrix, sm_row, sm_col, -1, 1);
 
-    dmatrice *product = matrice_multiplier(first_matrice, fm_lin, fm_col, second_matrice, sm_lin, sm_col);
+    dmatrix *product = matrix_multiplier(first_matrix, fm_row, fm_col, second_matrix, sm_row, sm_col);
     
-    print_matrices(first_matrice, fm_lin, fm_col, second_matrice, sm_lin, sm_col, product);
+    print_matrices(first_matrix, fm_row, fm_col, second_matrix, sm_row, sm_col, product);
 
     return 0;
 }
